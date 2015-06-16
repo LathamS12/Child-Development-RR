@@ -1,0 +1,221 @@
+{smcl}
+{com}{sf}{ul off}{txt}{.-}
+      name:  {res}<unnamed>
+       {txt}log:  {res}F:\Scott\ECLS-B Rerun\Logs\Imputation.smcl
+  {txt}log type:  {res}smcl
+ {txt}opened on:  {res}16 Jun 2015, 12:27:35
+{txt}
+{com}. 
+. 
+.         #delimit ;
+{txt}delimiter now ;
+{com}.                 gl impute       "black hisp asian other hinc urban rural bweight weight height mpart mlook 
+>                                                 mout paredhilesshs paredhihs paredhilesscoll enghome books wic
+>                                                 preads ptvhrswk dinfam discorp " ;
+{txt}
+{com}.                 gl reg          "poor age female numchild cregion" ;
+{txt}
+{com}.         #delimit cr
+{txt}delimiter now cr
+{com}. 
+.         sum $impute
+
+{txt}    Variable {c |}       Obs        Mean    Std. Dev.       Min        Max
+{hline 13}{c +}{hline 56}
+{space 7}black {c |}{res}     18742    .1537723    .3607399          0          1
+{txt}{space 8}hisp {c |}{res}     18742    .2004589    .4003544          0          1
+{txt}{space 7}asian {c |}{res}     18742    .1040444    .3053263          0          1
+{txt}{space 7}other {c |}{res}     18742    .1122612     .315696          0          1
+{txt}{space 8}hinc {c |}{res}     17750     .252507    .4344627          0          1
+{txt}{hline 13}{c +}{hline 56}
+{space 7}urban {c |}{res}     17899    .2907425    .4541176          0          1
+{txt}{space 7}rural {c |}{res}     18685    .3088039    .4620124          0          1
+{txt}{space 5}bweight {c |}{res}     18450    6.468388    1.943787    .500308   11.99637
+{txt}{space 6}weight {c |}{res}     17207    33.75773    8.611444     17.632    107.996
+{txt}{space 6}height {c |}{res}     17553    37.24754    4.211607   26.77165   47.24409
+{txt}{hline 13}{c +}{hline 56}
+{space 7}mpart {c |}{res}     18553    .1882714    .3909393          0          1
+{txt}{space 7}mlook {c |}{res}     18553    .0612839    .2398568          0          1
+{txt}{space 8}mout {c |}{res}     18553    .3661941    .4817764          0          1
+{txt}paredhiles~s {c |}{res}     18734    .1068111    .3088812          0          1
+{txt}{space 3}paredhihs {c |}{res}     18734    .2360414    .4246593          0          1
+{txt}{hline 13}{c +}{hline 56}
+paredhiles~l {c |}{res}     18734    .3035123    .4597868          0          1
+{txt}{space 5}enghome {c |}{res}     18747    .2043527    .4032386          0          1
+{txt}{space 7}books {c |}{res}     18760          50    9.999734   40.20897   142.9209
+{txt}{space 9}wic {c |}{res}     18728    .3818347    .4858493          0          1
+{txt}{space 6}preads {c |}{res}     18772    .4147134    .4926856          0          1
+{txt}{hline 13}{c +}{hline 56}
+{space 4}ptvhrswk {c |}{res}     18486    2.348696    2.292516          0         24
+{txt}{space 6}dinfam {c |}{res}     18770    5.773362     1.83698          0          7
+{txt}{space 5}discorp {c |}{res}     18739     .428358     .494854          0          1
+{txt}
+{com}.         sum $reg
+
+{txt}    Variable {c |}       Obs        Mean    Std. Dev.       Min        Max
+{hline 13}{c +}{hline 56}
+{space 8}poor {c |}{res}     18776    .2449936    .4300949          0          1
+{txt}{space 9}age {c |}{res}     18776    3.170417    1.211237        1.4   5.441667
+{txt}{space 6}female {c |}{res}     18776    .4899872     .499913          0          1
+{txt}{space 4}numchild {c |}{res}     18776    2.417554    1.200053          1         11
+{txt}{space 5}cregion {c |}{res}     18776    2.731146    1.011119          1          4
+{txt}
+{com}. 
+.         //Set and register the data
+.                 mi set wide
+{txt}
+{com}.                 mi register imputed $impute
+{txt}
+{com}.                 mi register regular $reg
+{txt}
+{com}. 
+.                 set seed 10001
+{txt}
+{com}. 
+.                 //Including all controls
+.                         mi impute chained (regress) $impute = $reg, add(5)
+{res}
+{txt}Conditional models:
+{p 12 21 2}
+{bf:preads}: regress preads dinfam books enghome black hisp asian other discorp paredhilesshs paredhihs paredhilesscoll wic rural mpart mlook mout ptvhrswk bweight urban hinc height weight poor age female numchild cregion
+{p_end}
+{p 12 21 2}
+{bf:dinfam}: regress dinfam preads books enghome black hisp asian other discorp paredhilesshs paredhihs paredhilesscoll wic rural mpart mlook mout ptvhrswk bweight urban hinc height weight poor age female numchild cregion
+{p_end}
+{p 13 21 2}
+{bf:books}: regress books preads dinfam enghome black hisp asian other discorp paredhilesshs paredhihs paredhilesscoll wic rural mpart mlook mout ptvhrswk bweight urban hinc height weight poor age female numchild cregion
+{p_end}
+{p 11 21 2}
+{bf:enghome}: regress enghome preads dinfam books black hisp asian other discorp paredhilesshs paredhihs paredhilesscoll wic rural mpart mlook mout ptvhrswk bweight urban hinc height weight poor age female numchild cregion
+{p_end}
+{p 13 21 2}
+{bf:black}: regress black preads dinfam books enghome hisp asian other discorp paredhilesshs paredhihs paredhilesscoll wic rural mpart mlook mout ptvhrswk bweight urban hinc height weight poor age female numchild cregion
+{p_end}
+{p 14 21 2}
+{bf:hisp}: regress hisp preads dinfam books enghome black asian other discorp paredhilesshs paredhihs paredhilesscoll wic rural mpart mlook mout ptvhrswk bweight urban hinc height weight poor age female numchild cregion
+{p_end}
+{p 13 21 2}
+{bf:asian}: regress asian preads dinfam books enghome black hisp other discorp paredhilesshs paredhihs paredhilesscoll wic rural mpart mlook mout ptvhrswk bweight urban hinc height weight poor age female numchild cregion
+{p_end}
+{p 13 21 2}
+{bf:other}: regress other preads dinfam books enghome black hisp asian discorp paredhilesshs paredhihs paredhilesscoll wic rural mpart mlook mout ptvhrswk bweight urban hinc height weight poor age female numchild cregion
+{p_end}
+{p 11 21 2}
+{bf:discorp}: regress discorp preads dinfam books enghome black hisp asian other paredhilesshs paredhihs paredhilesscoll wic rural mpart mlook mout ptvhrswk bweight urban hinc height weight poor age female numchild cregion
+{p_end}
+{p 5 21 2}
+{bf:paredhilesshs}: regress paredhilesshs preads dinfam books enghome black hisp asian other discorp paredhihs paredhilesscoll wic rural mpart mlook mout ptvhrswk bweight urban hinc height weight poor age female numchild cregion
+{p_end}
+{p 9 21 2}
+{bf:paredhihs}: regress paredhihs preads dinfam books enghome black hisp asian other discorp paredhilesshs paredhilesscoll wic rural mpart mlook mout ptvhrswk bweight urban hinc height weight poor age female numchild cregion
+{p_end}
+{p 4 21 2}
+{bf:paredhilessc~l}: regress paredhilesscoll preads dinfam books enghome black hisp asian other discorp paredhilesshs paredhihs wic rural mpart mlook mout ptvhrswk bweight urban hinc height weight poor age female numchild cregion
+{p_end}
+{p 15 21 2}
+{bf:wic}: regress wic preads dinfam books enghome black hisp asian other discorp paredhilesshs paredhihs paredhilesscoll rural mpart mlook mout ptvhrswk bweight urban hinc height weight poor age female numchild cregion
+{p_end}
+{p 13 21 2}
+{bf:rural}: regress rural preads dinfam books enghome black hisp asian other discorp paredhilesshs paredhihs paredhilesscoll wic mpart mlook mout ptvhrswk bweight urban hinc height weight poor age female numchild cregion
+{p_end}
+{p 13 21 2}
+{bf:mpart}: regress mpart preads dinfam books enghome black hisp asian other discorp paredhilesshs paredhihs paredhilesscoll wic rural mlook mout ptvhrswk bweight urban hinc height weight poor age female numchild cregion
+{p_end}
+{p 13 21 2}
+{bf:mlook}: regress mlook preads dinfam books enghome black hisp asian other discorp paredhilesshs paredhihs paredhilesscoll wic rural mpart mout ptvhrswk bweight urban hinc height weight poor age female numchild cregion
+{p_end}
+{p 14 21 2}
+{bf:mout}: regress mout preads dinfam books enghome black hisp asian other discorp paredhilesshs paredhihs paredhilesscoll wic rural mpart mlook ptvhrswk bweight urban hinc height weight poor age female numchild cregion
+{p_end}
+{p 10 21 2}
+{bf:ptvhrswk}: regress ptvhrswk preads dinfam books enghome black hisp asian other discorp paredhilesshs paredhihs paredhilesscoll wic rural mpart mlook mout bweight urban hinc height weight poor age female numchild cregion
+{p_end}
+{p 11 21 2}
+{bf:bweight}: regress bweight preads dinfam books enghome black hisp asian other discorp paredhilesshs paredhihs paredhilesscoll wic rural mpart mlook mout ptvhrswk urban hinc height weight poor age female numchild cregion
+{p_end}
+{p 13 21 2}
+{bf:urban}: regress urban preads dinfam books enghome black hisp asian other discorp paredhilesshs paredhihs paredhilesscoll wic rural mpart mlook mout ptvhrswk bweight hinc height weight poor age female numchild cregion
+{p_end}
+{p 14 21 2}
+{bf:hinc}: regress hinc preads dinfam books enghome black hisp asian other discorp paredhilesshs paredhihs paredhilesscoll wic rural mpart mlook mout ptvhrswk bweight urban height weight poor age female numchild cregion
+{p_end}
+{p 12 21 2}
+{bf:height}: regress height preads dinfam books enghome black hisp asian other discorp paredhilesshs paredhihs paredhilesscoll wic rural mpart mlook mout ptvhrswk bweight urban hinc weight poor age female numchild cregion
+{p_end}
+{p 12 21 2}
+{bf:weight}: regress weight preads dinfam books enghome black hisp asian other discorp paredhilesshs paredhihs paredhilesscoll wic rural mpart mlook mout ptvhrswk bweight urban hinc height poor age female numchild cregion
+{p_end}
+
+{res}{txt}Performing chained iterations ...
+{res}{txt}
+Multivariate imputation{txt}{col 45}{ralign 12:Imputations }= {res}       5
+{txt}Chained equations{txt}{col 45}{ralign 12:added }= {res}       5
+{txt}Imputed: {it:m}=1 through {it:m}=5{txt}{col 45}{ralign 12:updated }= {res}       0
+
+{txt}Initialization: {res}monotone{txt}{col 45}{ralign 12:Iterations }= {res}      50
+{txt}{col 45}{ralign 12:burn-in }= {res}      10
+
+{txt}{p 13 15 2}{bf:black}: linear regression{p_end}
+{txt}{p 14 15 2}{bf:hisp}: linear regression{p_end}
+{txt}{p 13 15 2}{bf:asian}: linear regression{p_end}
+{txt}{p 13 15 2}{bf:other}: linear regression{p_end}
+{txt}{p 14 15 2}{bf:hinc}: linear regression{p_end}
+{txt}{p 13 15 2}{bf:urban}: linear regression{p_end}
+{txt}{p 13 15 2}{bf:rural}: linear regression{p_end}
+{txt}{p 11 15 2}{bf:bweight}: linear regression{p_end}
+{txt}{p 12 15 2}{bf:weight}: linear regression{p_end}
+{txt}{p 12 15 2}{bf:height}: linear regression{p_end}
+{txt}{p 13 15 2}{bf:mpart}: linear regression{p_end}
+{txt}{p 13 15 2}{bf:mlook}: linear regression{p_end}
+{txt}{p 14 15 2}{bf:mout}: linear regression{p_end}
+{txt}{p 5 15 2}{bf:paredhilesshs}: linear regression{p_end}
+{txt}{p 9 15 2}{bf:paredhihs}: linear regression{p_end}
+{txt}{p 4 15 2}{bf:paredhilessc~l}: linear regression{p_end}
+{txt}{p 11 15 2}{bf:enghome}: linear regression{p_end}
+{txt}{p 13 15 2}{bf:books}: linear regression{p_end}
+{txt}{p 15 15 2}{bf:wic}: linear regression{p_end}
+{txt}{p 12 15 2}{bf:preads}: linear regression{p_end}
+{txt}{p 10 15 2}{bf:ptvhrswk}: linear regression{p_end}
+{txt}{p 12 15 2}{bf:dinfam}: linear regression{p_end}
+{txt}{p 11 15 2}{bf:discorp}: linear regression{p_end}
+
+{txt}{hline 19}{c TT}{hline 35}{hline 11}
+{txt}{col 20}{c |}{center 46:  Observations per {it:m}}
+{txt}{col 20}{c LT}{hline 35}{c TT}{hline 10}
+{txt}{col 11}Variable {c |}{ralign 12:Complete }{ralign 13:Incomplete }{ralign 10:Imputed }{c |}{ralign 10:Total}
+{hline 19}{c +}{hline 35}{c +}{hline 10}
+{txt}{ralign 19:black }{c |}{res}      18742           34        34 {txt}{c |}{res}     18776
+{txt}{ralign 19:hisp }{c |}{res}      18742           34        34 {txt}{c |}{res}     18776
+{txt}{ralign 19:asian }{c |}{res}      18742           34        34 {txt}{c |}{res}     18776
+{txt}{ralign 19:other }{c |}{res}      18742           34        34 {txt}{c |}{res}     18776
+{txt}{ralign 19:hinc }{c |}{res}      17750         1026      1026 {txt}{c |}{res}     18776
+{txt}{ralign 19:urban }{c |}{res}      17899          877       877 {txt}{c |}{res}     18776
+{txt}{ralign 19:rural }{c |}{res}      18685           91        91 {txt}{c |}{res}     18776
+{txt}{ralign 19:bweight }{c |}{res}      18450          326       326 {txt}{c |}{res}     18776
+{txt}{ralign 19:weight }{c |}{res}      17207         1569      1569 {txt}{c |}{res}     18776
+{txt}{ralign 19:height }{c |}{res}      17553         1223      1223 {txt}{c |}{res}     18776
+{txt}{ralign 19:mpart }{c |}{res}      18553          223       223 {txt}{c |}{res}     18776
+{txt}{ralign 19:mlook }{c |}{res}      18553          223       223 {txt}{c |}{res}     18776
+{txt}{ralign 19:mout }{c |}{res}      18553          223       223 {txt}{c |}{res}     18776
+{txt}{ralign 19:paredhilesshs }{c |}{res}      18734           42        42 {txt}{c |}{res}     18776
+{txt}{ralign 19:paredhihs }{c |}{res}      18734           42        42 {txt}{c |}{res}     18776
+{txt}{ralign 19:paredhilessc~l }{c |}{res}      18734           42        42 {txt}{c |}{res}     18776
+{txt}{ralign 19:enghome }{c |}{res}      18747           29        29 {txt}{c |}{res}     18776
+{txt}{ralign 19:books }{c |}{res}      18760           16        16 {txt}{c |}{res}     18776
+{txt}{ralign 19:wic }{c |}{res}      18728           48        48 {txt}{c |}{res}     18776
+{txt}{ralign 19:preads }{c |}{res}      18772            4         4 {txt}{c |}{res}     18776
+{txt}{ralign 19:ptvhrswk }{c |}{res}      18486          290       290 {txt}{c |}{res}     18776
+{txt}{ralign 19:dinfam }{c |}{res}      18770            6         6 {txt}{c |}{res}     18776
+{txt}{ralign 19:discorp }{c |}{res}      18739           37        37 {txt}{c |}{res}     18776
+{txt}{hline 19}{c BT}{hline 35}{c BT}{hline 10}
+{p 0 1 1 66}(complete + incomplete = total; imputed is the minimum across {it:m}
+ of the number of filled-in observations.){p_end}
+{res}{txt}
+{com}.                         log close
+      {txt}name:  {res}<unnamed>
+       {txt}log:  {res}F:\Scott\ECLS-B Rerun\Logs\Imputation.smcl
+  {txt}log type:  {res}smcl
+ {txt}closed on:  {res}16 Jun 2015, 12:30:03
+{txt}{.-}
+{smcl}
+{txt}{sf}{ul off}
